@@ -3,11 +3,8 @@
 """
 Created on Thu May  5 10:50:04 2022
 
-@author: cbr
+@author: vishak
 """
-
-import os
-os.chdir("/home/cbr/TATA_Sanscog/ADMIXTURE")
 
 import getopt
 import sys
