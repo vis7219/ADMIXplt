@@ -76,7 +76,7 @@ def refine_df(combined_df , df):
             
         keymax = max(zip(scores.values() , scores.keys()))[1]
         
-        temp_df.sort_values(by = [0] , inplace = True)
+        temp_df.sort_values(by = int(keymax) , inplace = True)
         
         ordered_main_subpop_df = pd.concat([ordered_main_subpop_df , temp_df])
         
@@ -105,7 +105,7 @@ def refine_df(combined_df , df):
             
         keymax = max(zip(scores.values() , scores.keys()))[1]
         
-        temp_df.sort_values(by = 0 , inplace = True)
+        temp_df.sort_values(by = int(keymax) , inplace = True)
         
         ordered_dot_df = pd.concat([ordered_dot_df , temp_df])
         
@@ -278,7 +278,7 @@ if __name__=="__main__":
         pop_xticks(combined_df , count)
     
         # Looping through the Ancesteries columns
-        bottom_df = df[0] # Important for making STACKED Bar Plots
+        bottom_df = combined_df[0] # Important for making STACKED Bar Plots
         for i in range(anc_no):
             if i == 0:
                 ax.bar(combined_df['Sample_ID'],
@@ -293,7 +293,7 @@ if __name__=="__main__":
                        bottom = bottom_df,
                        color = colors[i])
                 
-                bottom_df = bottom_df + df[i]
+                bottom_df = bottom_df + combined_df[i]
         
         count += 1
         
