@@ -120,11 +120,15 @@ def pop_divider(combined_df):
     last_pop_sample_no = list(pop_grp.last()['index'])
     
     for i in last_pop_sample_no:
-        ax.plot([i,i],
-                [0,1],
-                color = 'black',
-                linewidth = 0.5)
-    
+        if int(i) == len(combined_df) - 1:
+            continue
+        
+        else:
+            ax.plot([i,i],
+                    [0,1],
+                    color = 'black',
+                    linewidth = 0.5)
+        
     return(last_pop_sample_no)
         
 def subpop_divider(combined_df , last_pop_sample_no):
@@ -201,7 +205,15 @@ def howto_use():
     print("\t \t \t Column3 = Sub-Population (If not known for particular group, fill with '.') [NOT REQUIRED]\n")
     print("********************\n")
     
-
+def k_TextBox(k):
+    props = dict(boxstyle = 'round' , facecolor = 'w' , alpha = 0.0)
+    ax.text(-0.02,
+            0.5,
+            'K = ' + str(k),
+            transform = ax.transAxes,
+            fontsize = 20,
+            bbox = props,
+            verticalalignment = 'center')
 
 if __name__=="__main__":
 
@@ -296,6 +308,7 @@ if __name__=="__main__":
                 bottom_df = bottom_df + combined_df[i]
         
         count += 1
+        k_TextBox(j)
         
     fig.savefig(params['output'] + '.' + params['output_type'] , format = params['output_type'])
 
