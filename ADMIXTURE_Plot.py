@@ -76,7 +76,7 @@ def refine_df(combined_df , df):
             
         keymax = max(zip(scores.values() , scores.keys()))[1]
         
-        temp_df.sort_values(by = [0] , inplace = True)
+        temp_df.sort_values(by = int(keymax) , inplace = True)
         
         ordered_main_subpop_df = pd.concat([ordered_main_subpop_df , temp_df])
         
@@ -105,7 +105,7 @@ def refine_df(combined_df , df):
             
         keymax = max(zip(scores.values() , scores.keys()))[1]
         
-        temp_df.sort_values(by = 0 , inplace = True)
+        temp_df.sort_values(by = int(keymax) , inplace = True)
         
         ordered_dot_df = pd.concat([ordered_dot_df , temp_df])
         
@@ -114,6 +114,57 @@ def refine_df(combined_df , df):
     #final_df['index'] = final_df['index'].astype('int')
     
     return(final_df)
+
+#df = pd.read_table('2_LDpruned' + "." + '3' +".Q" , header = None, sep = ' ')
+#meta = read_metadata("Sample_Metadata.xlsx")
+#combined_df = pd.concat([meta , df], axis = 1)
+
+#new_df = refine_df(combined_df , df)
+#new_df.reset_index(inplace = True)
+
+#colors = ['indianred' , 'saddlebrown' , 'darkorange' , 'khaki' , 'limegreen' , 'aqua' , 'cornflowerblue' ,
+#          'indigo' , 'purple' , 'gray']
+
+#bottom_df = df[0] # Important for making STACKED Bar Plots
+#anc_no = 3
+
+#new_df['Sum'] = new_df[0] + new_df[1] + new_df[2]
+
+#fig = plt.figure(figsize=(22, 15))
+#fig.subplots_adjust(wspace=0, hspace=0.14)
+#ax = fig.add_subplot(111)
+#for i in range(anc_no):
+#    if i == 0:
+#        ax.bar(new_df['Sample_ID'],
+#               new_df[i],
+#               width = 1.0,
+#               color = colors[i])
+    
+#    if i == 1:
+#        ax.bar(new_df['Sample_ID'],
+#               new_df[i],
+#               width = 1.0,
+#               color = colors[i],
+#               bottom = new_df[0])
+#        
+#    if i == 2:
+#        ax.bar(new_df['Sample_ID'],
+#              new_df[i],
+#              width = 1.0,
+#               color = colors[i],
+#               bottom = new_df[0] + new_df[1])
+#        
+    
+        
+    #else:
+    #    ax.bar(new_df['Sample_ID'],
+    #           new_df[i],
+    #           width = 1.0,
+    #           bottom = bottom_df,
+    #           color = colors[i])
+        
+    #    bottom_df = bottom_df + df[i]
+
 
 def pop_divider(combined_df):
     pop_grp = combined_df.groupby(('Population'))
@@ -278,7 +329,7 @@ if __name__=="__main__":
         pop_xticks(combined_df , count)
     
         # Looping through the Ancesteries columns
-        bottom_df = df[0] # Important for making STACKED Bar Plots
+        bottom_df = combined_df[0] # Important for making STACKED Bar Plots
         for i in range(anc_no):
             if i == 0:
                 ax.bar(combined_df['Sample_ID'],
@@ -293,7 +344,7 @@ if __name__=="__main__":
                        bottom = bottom_df,
                        color = colors[i])
                 
-                bottom_df = bottom_df + df[i]
+                bottom_df = bottom_df + combined_df[i]
         
         count += 1
         
