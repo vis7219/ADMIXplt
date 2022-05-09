@@ -48,6 +48,73 @@ def read_metadata(meta_file):
     
     return(meta_file)
 
+def refine_df(combined_df , df):
+    
+    # Remove rows having a '.' as Sub-Population
+    main_subpop_df = combined_df[~combined_df['Sub-Population'].isin(['.'])]
+    
+    # DF to concatenate the Main DF with
+    ordered_main_subpop_df = pd.DataFrame(columns = main_subpop_df.columns)
+    
+    # For loop to get all unique Sub-Population IDs. Using list(set(df['Sub-Population'])) was not
+    # Preservin order. So this is solution
+    subpop = []
+    for subpop_id in main_subpop_df['Sub-Population'].tolist():
+        if subpop_id in subpop:
+            continue
+        
+        else:
+            subpop.append(subpop_id)
+    
+    # Creating new DF with sorted Values
+    for subpop_id in subpop:
+        temp_df = main_subpop_df[main_subpop_df['Sub-Population'].isin([subpop_id])]
+
+        scores = {}
+        for i in list(df.columns):
+            scores[int(i)] = sum(temp_df[i])
+            
+        keymax = max(zip(scores.values() , scores.keys()))[1]
+        
+        temp_df.sort_values(by = [0] , inplace = True)
+        
+        ordered_main_subpop_df = pd.concat([ordered_main_subpop_df , temp_df])
+        
+    
+    # Keep rows having '.' as Sub-Population
+    dot_df = combined_df[combined_df['Sub-Population'].isin(['.'])]
+    
+    ordered_dot_df = pd.DataFrame(columns = dot_df.columns)
+    
+    # For loop to get all Population IDs
+    pop = []
+    for pop_id in dot_df['Population'].tolist():
+        if pop_id in pop:
+            continue
+        
+        else:
+            pop.append(pop_id)
+            
+    # Creating new DF with sorted Values
+    for pop_id in pop:
+        temp_df = dot_df[dot_df['Population'].isin([pop_id])]
+        
+        scores = {}
+        for i in list(df.columns):
+            scores[int(i)] = sum(temp_df[i])
+            
+        keymax = max(zip(scores.values() , scores.keys()))[1]
+        
+        temp_df.sort_values(by = 0 , inplace = True)
+        
+        ordered_dot_df = pd.concat([ordered_dot_df , temp_df])
+        
+    final_df = pd.concat([ordered_main_subpop_df , ordered_dot_df]).reset_index(drop = True)
+    
+    #final_df['index'] = final_df['index'].astype('int')
+    
+    return(final_df)
+
 def pop_divider(combined_df):
     pop_grp = combined_df.groupby(('Population'))
     last_pop_sample_no = list(pop_grp.last()['index'])
@@ -177,7 +244,10 @@ if __name__=="__main__":
         meta = read_metadata(params['pop'])
         
         # Merging the ADMIXTURE & METADATA dataframes
-        combined_df = pd.concat([meta , df], axis = 1).reset_index()
+        combined_df = pd.concat([meta , df], axis = 1)
+        
+        combined_df = refine_df(combined_df , df)
+        combined_df.reset_index(inplace = True)
         
         # Position of the ADMIXTURE Subplot
         graph_no = int(str(K) + '1' + str(j))
